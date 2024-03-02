@@ -1,49 +1,56 @@
-const axios = require('axios');
-const url = require('url');
-const dotenv = require('dotenv').config();
+const axios = require("axios");
+const url = require("url");
+const dotenv = require("dotenv").config();
 
 const discordAuth = async (req, res) => {
-    const {code} = req.query;
-
-    if (code){
-        const formData = new url.URLSearchParams({
-            client_id: process.env.CLIENT_ID,
-            client_secret: process.env.CLIENT_SECRET,
-            grant_type: 'authorization_code',
-            code: code,
-            redirect_uri: process.env.REDIRECT_URI,
-        });
-    }
-    const output = await axios.post('https://discord.com/api/v8/oauth2/token', formData, {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
+    try{
+  const { code } = req.query;
+  if (code) {
+    const formData = new url.URLSearchParams({
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+      grant_type: "authorization_code",
+      code: code.toString(),
+      redirect_uri: process.env.REDIRECT_URI,
     });
 
+    const output = await axios.post(
+      "https://discord.com/api/v10/oauth2/token",
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
     if (output.data){
-        const access = output.data.access_token;
-
-        const user = await axios.get('https://discord.com/api/v8/users/@me', {
-            headers: {
-                authorization: `Bearer ${access}`
-            }
-        });
-    //handle refresh token
-    const formData1 = new url.URLSearchParams({
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
-        grant_type: 'refresh_token',
-        code: code,
-        refresh_token: output.data.refresh_token,
-        scope: 'identify'
+    res.cookie("token", output.data.access_token, {
+      maxAge: 3600000,
+      httpOnly: false,
     });
-    const refresh = await axios.post('https://discord.com/api/v8/oauth2/token', formData1, {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    });
-
+    res.redirect("http://localhost:5500/index.html");
     }
-    res.send(user.data);
+  }} catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 }
-module.exports = {discordAuth};
+const checkUserFromToken = async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (token) {
+        const user = await axios.get("https://discord.com/api/v10/users/@me", {
+            headers: {
+            authorization: `Bearer ${token}`,
+            },
+        });
+        if (user.data) {
+            res.status(200).json(user.data);
+        }} else {
+            res.status(401).json({ message: "Unauthorized" });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }}
+module.exports = { discordAuth, checkUserFromToken};

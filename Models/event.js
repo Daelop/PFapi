@@ -5,6 +5,8 @@ const ObjectId = Schema.ObjectId;
 
 const eventSchema = new Schema({
     name:{type:String,required:true},
+    creator:{type:String,required:true},
+    creatorName:{type:String,required:true},
     description:{type:String,required:true},
     open:{type:Boolean, required:true, default:false},
     game:String,

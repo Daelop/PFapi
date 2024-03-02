@@ -2,19 +2,22 @@
 const Models = require("../Models");
 
 const getUserFromDiscord = async (req, res) => {
-  Models.User.findOne({ discordId: req.user.id }, (err, user) => {
-    if (err) {
-      console.log(err);
-    }
-    if (user) {
+  let username = req.body.username;
+  let id = req.body.id;
+  	let user = await Models.User.exists({ discordId: id })
+    if (user!==null) {
       res.send(user);
     } else {
       const newUser = new Models.User({
-        discordId: req.user.id,
-        username: req.user.username,
+        discordId: id,
+        username: username,
       });
+      await newUser.save();
+
+      // Send the new user in the response
+      res.send(newUser);
     }
-  });
+
 };
 
 const updateUser = async (req, res) => {
@@ -28,4 +31,15 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { getUserFromDiscord, updateUser };
+const getUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await Models.User.findById(id);
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(error.message);
+    res.status(404).json({ message: error.message });
+  }
+};
+
+module.exports = { getUserFromDiscord, updateUser, getUser };
