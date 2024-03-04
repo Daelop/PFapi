@@ -6,7 +6,7 @@ const createEvent = async (req, res) => {
   
       res.status(200).json(Event);
     } catch (error) {
-      console.log(error.message);
+      console.log("error.message");
       res.status(500).json({ message: "error" });
     }
   };
@@ -17,7 +17,7 @@ const getEvents = async (req, res) => {
       res.status(200).json(eventInfo);
       console.log(eventInfo);
     } catch {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "error.message" });
     }
   };
 
@@ -28,7 +28,7 @@ const getEventById = async (req, res) => {
       res.status(200).json(eventInfo);
       console.log(eventInfo);
     } catch {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "error.message" });
     }
   };
 
@@ -39,7 +39,7 @@ const getEventById = async (req, res) => {
       res.status(200).json(eventInfo);
       console.log(eventInfo);
     } catch {
-      res.status(500).json({ message: error.message });
+      res.status(500).json({ message: "error.message" });
     }
   };
   const updateEvent = async (req, res) => {
@@ -48,7 +48,7 @@ const getEventById = async (req, res) => {
       const updatedEvent = await Models.event.findByIdAndUpdate(id, req.body);
       res.status(200).json(updatedEvent);}
     catch (error) {
-      console.log(error.message);
-      res.status(500).json({ message: error.message });
+      console.log("error.message");
+      res.status(500).json({ message: "error.message" });
     }};
   module.exports = {createEvent, getEvents, getEventById, cancelEvent, updateEvent};

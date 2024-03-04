@@ -16,10 +16,8 @@ const eventSchema = new Schema({
     applicationSettings:{
         reqIGN:{type:Boolean, required:true, default:true},
         reqSer:{type:Boolean, required:true, default:true},
-        reqDisc:{type:Boolean, required:true, default:true},
-        reqEmail:{type:Boolean, required:true, default:false},
         reqTOS:{type:Boolean, required:true, default:true},
-        
+        tos:String
     },
     participantSettings:{
         allowTitle:{type:Boolean, required:true, default:true},
