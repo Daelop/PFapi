@@ -2,7 +2,7 @@
 const Models = require("../Models");
 
 const getUserFromDiscord = async (req, res) => {
-  let username = req.body.username;
+ try{let username = req.body.username;
   let id = req.body.id;
   	let user = await Models.User.exists({ discordId: id })
     if (user!==null) {
@@ -16,6 +16,10 @@ const getUserFromDiscord = async (req, res) => {
 
       // Send the new user in the response
       res.send(newUser);
+    }}
+    catch (error) {
+      console.log(error.message);
+      res.status(500).json({ message: error.message });
     }
 
 };

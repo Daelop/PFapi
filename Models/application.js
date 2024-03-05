@@ -6,7 +6,7 @@ const ObjectId = Schema.ObjectId;
 
 const appSchema = new Schema(
   {
-    userId: { type: ObjectId, required: true },
+    user: { type: ObjectId, required: true },
     event: { type: ObjectId, required: true },
     username: { type: String, required: true },
     ign: { type: String, required: false },
