@@ -1,10 +1,10 @@
-// Purpose: Model for application
+// Purpose: Model for eventUser
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-const appSchema = new Schema(
+const eventUserSchema = new Schema(
   {
     userId: { type: ObjectId, required: true },
     event: { type: ObjectId, required: true },
@@ -17,5 +17,5 @@ const appSchema = new Schema(
     timestamps: true,
   }
 );
-const Application = mongoose.model("Application", appSchema);
-module.exports = Application;
+const eventUser = mongoose.model("eventUser", eventUserSchema);
+module.exports = eventUser;

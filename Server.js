@@ -1,13 +1,24 @@
+/**
+ * Express server configuration and routes setup.
+ * @module Server
+ */
+
 const express = require('express')
 const dotenv = require('dotenv').config()
 const app = express()
 const PORT = process.env.PORT || 3000
-let eventRoute = require('./routes/eventRoute')
-let userRoute = require('./routes/userRoute')
-let authRoute = require('./routes/authRoute')
+
+const routes = require('./routes')
 const dbconnect = require('./dbConnect')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
+const swaggerUi = require('swagger-ui-express');
+swaggerDocument = require('./Documentation/PF-Docs.json');
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument)
+);
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:5500')
   res.header('Access-Control-Allow-Headers', 'content-type')
@@ -15,15 +26,28 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
   next()
 })
+
 app.use(bodyParser.json())
 app.use(cookieParser())
-app.use('/events', eventRoute)
-app.use('/users', userRoute)
-app.use('/auth', authRoute)
+app.use('/events', routes.eventRoute)
+app.use('/users', routes.userRoute)
+app.use('/auth', routes.authRoute)
+app.use('/applications', routes.applicationRoute)
+app.use('/eventusers', routes.eventUserRoute)
 
-try {app.listen(PORT, () =>
-      console.log(`Ready to rock on http://localhost:${PORT}`)
-    )} catch{(error) => {
-    console.log(error);
-  }};
+/**
+ * Start the server and listen on the specified port.
+ * @function
+ * @name listen
+ * @param {number} PORT - The port number to listen on.
+ * @returns {void}
+ */
+try {
+  app.listen(PORT, () =>
+    console.log(`Ready to rock on http://localhost:${PORT}`)
+  )
+} catch (error) {
+  console.log(error)
+}
+
 app.use(express.json())
